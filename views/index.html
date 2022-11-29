@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root">
+</div>
+<div>
+    <!-- Modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tạo mới</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" class="form-control" id="name" aria-describedby="emailHelp">
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="clazz">Class</label>
+                                </div>
+                                <select class="custom-select" id="clazz">
+
+                                </select>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="create()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" >Edit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" class="form-control" id="nameEdit" aria-describedby="emailHelp">
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="clazz">Class</label>
+                                </div>
+                                <select class="custom-select" id="clazzEdit">
+
+                                </select>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="edit()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    showKhung()
+
+    function showKhung() {
+        document.getElementById('root').innerHTML = `
+            <div id="nav-bar">
+            </div>
+            <div id="body">
+
+            </div>
+         `
+        showNavBar();
+        showHome();
+
+    }
+
+    function showNavBar() {
+        document.getElementById('nav-bar').innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Logo</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" onclick="showHome()">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="modal" data-target="#createModal">Tạo mới</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+        `
+    }
+
+    function showCreate() {
+        document.getElementById('body').innerHTML = `
+
+         <h1>Đây là trang tạo mới</h1>
+        `
+    }
+
+    function showHome() {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:3000/students',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: (students) => {
+                let htmlStudent = `
+                    <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Class</th>
+                        <th scope="col" colspan="2"><span style="margin-left: 23%">Action</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                `
+                for (let i = 0; i < students.length; i++) {
+                    htmlStudent += `
+                    <tr>
+                        <th scope="row">${i + 1}</th>
+                        <td>${students[i].name}</td>
+                        <td>${students[i].Clazz.name}</td>
+                        <td><button class="btn btn-outline-primary" onclick="showStudent('${students[i]._id}')" data-toggle="modal" data-target="#editModal">Edit</button></td>
+                        <td><button class="btn btn-outline-danger">Delete</button></td>
+                    </tr>
+                `
+                }
+                htmlStudent += `
+                    </tbody>
+                </table>
+                `
+                document.getElementById('body').innerHTML = htmlStudent;
+            }
+        })
+        getClasses()
+    }
+
+    function getClasses(){
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:3000/classes',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: (classes) => {
+                let htmlSelect = ``
+                for (const clazz of classes) {
+                   htmlSelect += `
+                    <option value="${clazz._id}">${clazz.name}</option>
+                   `
+                }
+                document.getElementById('clazz').innerHTML = htmlSelect
+                document.getElementById('clazzEdit').innerHTML = htmlSelect
+            }
+        })
+    }
+
+    function create(){
+        let name = document.getElementById('name').value;
+        let Clazz = $('#clazz').val();
+        let student = {
+            name: name,
+            Clazz: Clazz
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/students',
+            data: JSON.stringify(student),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: (student) => {
+                document.getElementById('name').value = '';
+                showHome()
+            }
+        })
+    }
+
+    function showStudent(id){
+        getClasses()
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:3000/students/'+ id,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: (student) => {
+                document.getElementById('nameEdit').value = student.name;
+                document.getElementById('clazzEdit').value = student.Clazz.name;
+            }
+        })
+    }
+
+</script>
+</html>
